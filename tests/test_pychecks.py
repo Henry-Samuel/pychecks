@@ -6,10 +6,7 @@ import ast
 import os
 import tempfile
 
-import pytest
-
 import pychecks
-
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -232,13 +229,24 @@ def test_normal_import_passes():
 # ---------------------------------------------------------------------------
 
 def test_run_checks_single_file():
-    src = '"""Mod."""\n\ndef good():\n    """Doc."""\n    pass\n\nclass OK:\n    """Doc."""\n    pass\n'
+    src = (
+        '"""Mod."""'
+        '\n'
+        '\n'
+        'def good():'
+        '\n    """Doc."""'
+        '\n    pass'
+        '\n'
+        '\n'
+        'class OK:'
+        '\n    """Doc."""'
+        '\n    pass'
+        '\n'
+    )
     path = _mktext(src)
     results = pychecks.run_checks([path], checks={"docstrings", "names"})
     assert not results
     os.remove(path)
-
-
 def test_run_checks_multiple_files():
     src1 = "def f():\n    pass\n"
     src2 = "def g():\n    pass\n"

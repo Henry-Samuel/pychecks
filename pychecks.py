@@ -11,9 +11,7 @@ import argparse
 import ast
 import os
 import re
-import sys
 from typing import NamedTuple
-
 
 # ---------------------------------------------------------------------------
 # Check result
@@ -65,14 +63,24 @@ def check_docstrings(tree: ast.AST | None, path: str) -> list[CheckResult]:
         def visit_FunctionDef(self, node: ast.FunctionDef) -> None:
             if ast.get_docstring(node) is None:
                 results.append(
-                    CheckResult(path, node.lineno, "D103", f"Missing function docstring: '{node.name}'")
+                    CheckResult(
+                        path,
+                        node.lineno,
+                        "D103",
+                        f"Missing function docstring: '{node.name}'",
+                    ),
                 )
             self.generic_visit(node)
 
         def visit_AsyncFunctionDef(self, node: ast.AsyncFunctionDef) -> None:
             if ast.get_docstring(node) is None:
                 results.append(
-                    CheckResult(path, node.lineno, "D103", f"Missing async function docstring: '{node.name}'")
+                    CheckResult(
+                        path,
+                        node.lineno,
+                        "D103",
+                        f"Missing async function docstring: '{node.name}'",
+                    ),
                 )
             self.generic_visit(node)
 
@@ -100,14 +108,24 @@ def check_name_conventions(tree: ast.AST | None, path: str) -> list[CheckResult]
         def visit_FunctionDef(self, node: ast.FunctionDef) -> None:
             if not is_snake(node.name):
                 results.append(
-                    CheckResult(path, node.lineno, "N100", f"Function '{node.name}' not snake_case")
+                    CheckResult(
+                        path,
+                        node.lineno,
+                        "N100",
+                        f"Function '{node.name}' not snake_case",
+                    ),
                 )
             self.generic_visit(node)
 
         def visit_AsyncFunctionDef(self, node: ast.AsyncFunctionDef) -> None:
             if not is_snake(node.name):
                 results.append(
-                    CheckResult(path, node.lineno, "N100", f"Async function '{node.name}' not snake_case")
+                    CheckResult(
+                        path,
+                        node.lineno,
+                        "N100",
+                        f"Async function '{node.name}' not snake_case",
+                    ),
                 )
             self.generic_visit(node)
 
@@ -122,7 +140,9 @@ def check_name_conventions(tree: ast.AST | None, path: str) -> list[CheckResult]
     return results
 
 
-def check_function_length(tree: ast.AST | None, path: str, max_lines: int = 30) -> list[CheckResult]:
+def check_function_length(
+    tree: ast.AST | None, path: str, max_lines: int = 30
+) -> list[CheckResult]:
     """Flag functions exceeding a line-count threshold."""
     results: list[CheckResult] = []
     if tree is None:
@@ -276,7 +296,15 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.json:
         import json
-        out = [{"file": r.file, "line": r.line, "code": r.code, "message": r.message} for r in results]
+        out = [
+            {
+                "file": r.file,
+                "line": r.line,
+                "code": r.code,
+                "message": r.message,
+            }
+            for r in results
+        ]
         print(json.dumps(out, indent=2))
     else:
         if not results:
